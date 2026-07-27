@@ -1,0 +1,6 @@
+name: MysticalPets
+version: '${version}'
+
+main: com.mysticalstudio.mysticalpets.MysticalPets
+api-version: '26.2'
+load: POSTWORLD
