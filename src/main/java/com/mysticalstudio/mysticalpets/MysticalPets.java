@@ -1,6 +1,8 @@
 package com.mysticalstudio.mysticalpets;
 
+import com.mysticalstudio.mysticalpets.commands.CommandManager;
 import com.mysticalstudio.mysticalpets.database.DatabaseManager;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MysticalPets extends JavaPlugin {
@@ -15,6 +17,11 @@ public final class MysticalPets extends JavaPlugin {
 
         databaseManager = new DatabaseManager(this);
         databaseManager.setupDatabase();
+
+        CommandManager commandManager = new CommandManager();
+
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> commandManager.register(event.registrar()));
+
 
         System.out.println("I am alive!");
 
