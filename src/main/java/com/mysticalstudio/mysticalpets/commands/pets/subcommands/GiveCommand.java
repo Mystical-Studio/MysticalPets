@@ -3,6 +3,7 @@ package com.mysticalstudio.mysticalpets.commands.pets.subcommands;
 import com.mysticalstudio.mysticalpets.commands.SubCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -55,5 +56,10 @@ public class GiveCommand implements SubCommand {
     @Override
     public String getPermission() {
         return SubCommand.super.getPermission();
+    }
+
+    @Override
+    public boolean hasPermission(CommandSender sender) {
+        return SubCommand.super.hasPermission(sender);
     }
 }
