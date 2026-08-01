@@ -1,7 +1,11 @@
-package com.mysticalstudio.mysticalpets.commands;
+package com.mysticalstudio.mysticalpets.commands.pets;
 
-import com.mysticalstudio.mysticalpets.commands.subcommands.GiveCommand;
+import com.mysticalstudio.mysticalpets.commands.SubCommand;
+import com.mysticalstudio.mysticalpets.commands.pets.subcommands.GiveCommand;
 
+import com.mysticalstudio.mysticalpets.commands.admin.subcommands.GetAllPetsCommand;
+import com.mysticalstudio.mysticalpets.database.DatabaseManager;
+import com.mysticalstudio.mysticalpets.managers.PetManager;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
@@ -9,11 +13,20 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
-public class PetCommand implements BasicCommand {
+public class PetsCommand implements BasicCommand {
 
     private final Map<String, SubCommand> subCommands = new LinkedHashMap<>();
 
-    public PetCommand() {
+    private final DatabaseManager databaseManager;
+    private final PetManager petManager;
+
+    public PetsCommand(DatabaseManager databaseManager, PetManager petManager) {
+
+        this.databaseManager = databaseManager;
+        this.petManager = petManager;
+
+
+        // Commands
         register(new GiveCommand());
     }
 
@@ -37,16 +50,27 @@ public class PetCommand implements BasicCommand {
             return;
         }
 
+        if (!command.hasPermission(sender)) {
+            sender.sendMessage("You do not have permission to use this command.");
+            return;
+        }
+
         String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
 
         command.execute(source, subArgs);
     }
 
     @Override
-    public @NonNull Collection<String> suggest(@NonNull CommandSourceStack source, String[] args) {
+    public Collection<String> suggest(CommandSourceStack source, String[] args) {
 
         if (args.length == 0) {
-            return subCommands.keySet();
+
+            return subCommands.values()
+                    .stream()
+                    .filter(command -> command.hasPermission(source.getSender()))
+                    .map(SubCommand::getName)
+                    .toList();
+
         }
 
         SubCommand command = subCommands.get(args[0].toLowerCase());
@@ -56,6 +80,7 @@ public class PetCommand implements BasicCommand {
             String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
 
             return command.tabComplete(source, subArgs);
+
         }
 
         return List.of();
@@ -71,7 +96,9 @@ public class PetCommand implements BasicCommand {
         sender.sendMessage("§6MysticalPets Commands:");
 
         for (SubCommand command : subCommands.values()) {
-            sender.sendMessage("§e/pets " + command.getName());
+            if (command.hasPermission(sender)) {
+                sender.sendMessage("§e/pets " + command.getName());
+            }
         }
     }
 }

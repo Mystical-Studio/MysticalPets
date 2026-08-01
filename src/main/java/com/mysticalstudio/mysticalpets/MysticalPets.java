@@ -3,6 +3,7 @@ package com.mysticalstudio.mysticalpets;
 import com.mysticalstudio.mysticalpets.commands.CommandManager;
 import com.mysticalstudio.mysticalpets.database.DatabaseInitializer;
 import com.mysticalstudio.mysticalpets.database.DatabaseManager;
+import com.mysticalstudio.mysticalpets.managers.PetManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,6 +11,7 @@ public final class MysticalPets extends JavaPlugin {
 
     DatabaseManager databaseManager;
     DatabaseInitializer initializer;
+    PetManager petManager;
 
     @Override
     public void onEnable() {
@@ -23,7 +25,10 @@ public final class MysticalPets extends JavaPlugin {
         initializer = new DatabaseInitializer(this, databaseManager);
         initializer.initialize();
 
-        CommandManager commandManager = new CommandManager();
+        petManager = new PetManager(this);
+        petManager.load();
+
+        CommandManager commandManager = new CommandManager(databaseManager, petManager);
 
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> commandManager.register(event.registrar()));
 

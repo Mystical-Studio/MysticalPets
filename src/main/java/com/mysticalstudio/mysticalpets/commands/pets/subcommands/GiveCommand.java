@@ -1,4 +1,4 @@
-package com.mysticalstudio.mysticalpets.commands.subcommands;
+package com.mysticalstudio.mysticalpets.commands.pets.subcommands;
 
 import com.mysticalstudio.mysticalpets.commands.SubCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -19,7 +19,7 @@ public class GiveCommand implements SubCommand {
     public void execute(CommandSourceStack source, String[] args) {
 
         if (args.length < 3) {
-            source.getSender().sendMessage("UsageL /pets give <player> <pet> <amount>");
+            source.getSender().sendMessage("Usage /pets give <player> <pet> <amount>");
             return;
         }
 
