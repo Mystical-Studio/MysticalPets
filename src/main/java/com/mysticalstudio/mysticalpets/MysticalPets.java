@@ -1,6 +1,7 @@
 package com.mysticalstudio.mysticalpets;
 
 import com.mysticalstudio.mysticalpets.commands.CommandManager;
+import com.mysticalstudio.mysticalpets.database.DatabaseInitializer;
 import com.mysticalstudio.mysticalpets.database.DatabaseManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -8,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class MysticalPets extends JavaPlugin {
 
     DatabaseManager databaseManager;
+    DatabaseInitializer initializer;
 
     @Override
     public void onEnable() {
@@ -16,7 +18,10 @@ public final class MysticalPets extends JavaPlugin {
         fileSetup();
 
         databaseManager = new DatabaseManager(this);
-        databaseManager.setupDatabase();
+        databaseManager.connect();
+
+        initializer = new DatabaseInitializer(this, databaseManager);
+        initializer.initialize();
 
         CommandManager commandManager = new CommandManager();
 
@@ -30,6 +35,10 @@ public final class MysticalPets extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+
+        if (databaseManager != null) {
+            databaseManager.disconnect();
+        }
 
         System.out.println("Goodbye world!");
     }
