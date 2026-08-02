@@ -1,24 +1,29 @@
 package com.mysticalstudio.mysticalpets.managers;
 
+import com.mysticalstudio.mysticalpets.database.DatabaseManager;
+import com.mysticalstudio.mysticalpets.database.repositories.PlayerPetRepository;
 import com.mysticalstudio.mysticalpets.models.Pet;
+import com.mysticalstudio.mysticalpets.models.PlayerPet;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PetManager {
 
     private final JavaPlugin plugin;
+    private final DatabaseManager databaseManager;
     private final File petsFolder;
+    private PlayerPetRepository playerPetRepository;
 
     private final Map<String, Pet> pets = new HashMap<>();
 
-    public PetManager(JavaPlugin plugin) {
+    public PetManager(JavaPlugin plugin, DatabaseManager databaseManager) {
         this.plugin = plugin;
+        this.databaseManager = databaseManager;
         this.petsFolder = new File(plugin.getDataFolder(), "pets");
+        playerPetRepository = new PlayerPetRepository(databaseManager);
     }
 
     public void load() {
@@ -54,7 +59,6 @@ public class PetManager {
         if (!petsFolder.exists()) {
             petsFolder.mkdirs();
         }
-
     }
 
     private void saveDefaultPets() {
@@ -64,7 +68,6 @@ public class PetManager {
         if (!dragon.exists()) {
             plugin.saveResource("pets/dragon.yml", false);
         }
-
     }
 
     private void loadPets() {
@@ -83,7 +86,6 @@ public class PetManager {
 
             loadPet(file);
         }
-
     }
 
     private void loadPet(File file) {
@@ -102,6 +104,33 @@ public class PetManager {
         Pet pet = new Pet(id, displayName, rarity);
 
         pets.put(id.toLowerCase(), pet);
+    }
+
+    public void givePet(UUID playerUuid, String petId) {
+
+        Pet pet = getPet(petId);
+
+        if (pet == null) {
+            throw new IllegalArgumentException("Pet does not exist.");
+        }
+
+        playerPetRepository.addPet(playerUuid, petId);
+    }
+
+    public void removePet(UUID playerUuid, String petId) {
+
+        Pet pet = getPet(petId);
+
+        if (pet == null) {
+            throw new IllegalArgumentException("Pet does not exist.");
+        }
+
+        playerPetRepository.removePet(playerUuid, petId);
+    }
+
+    public List<PlayerPet> getPlayerPets(UUID playerUuid) {
+
+        return playerPetRepository.getPlayerPets(playerUuid);
 
     }
 

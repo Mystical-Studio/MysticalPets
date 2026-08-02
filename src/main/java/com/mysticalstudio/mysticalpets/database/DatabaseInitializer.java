@@ -22,9 +22,8 @@ public class DatabaseInitializer {
             statement.execute("""
                 CREATE TABLE IF NOT EXISTS player_pets (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    uuid TEXT NOT NULL,
-                    pet_id INTEGER NOT NULL,
-                    amount INTEGER NOT NULL
+                    owner_uuid NOT NULL,
+                    pet_id INTEGER NOT NULL
                 )
             """);
 

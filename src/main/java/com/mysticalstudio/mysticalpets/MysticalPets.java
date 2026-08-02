@@ -25,7 +25,7 @@ public final class MysticalPets extends JavaPlugin {
         initializer = new DatabaseInitializer(this, databaseManager);
         initializer.initialize();
 
-        petManager = new PetManager(this);
+        petManager = new PetManager(this, databaseManager);
         petManager.load();
 
         CommandManager commandManager = new CommandManager(databaseManager, petManager);

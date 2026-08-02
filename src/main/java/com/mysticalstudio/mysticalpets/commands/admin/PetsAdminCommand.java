@@ -1,7 +1,9 @@
 package com.mysticalstudio.mysticalpets.commands.admin;
 
 import com.mysticalstudio.mysticalpets.commands.SubCommand;
+import com.mysticalstudio.mysticalpets.commands.admin.subcommands.AddPetCommand;
 import com.mysticalstudio.mysticalpets.commands.admin.subcommands.GetAllPetsCommand;
+import com.mysticalstudio.mysticalpets.commands.admin.subcommands.GetPlayerPetsCommand;
 import com.mysticalstudio.mysticalpets.database.DatabaseManager;
 import com.mysticalstudio.mysticalpets.managers.PetManager;
 import io.papermc.paper.command.brigadier.BasicCommand;
@@ -24,6 +26,8 @@ public class PetsAdminCommand implements BasicCommand {
 
         // Commands
         register(new GetAllPetsCommand(petManager));
+        register(new GetPlayerPetsCommand(petManager));
+        register(new AddPetCommand(petManager));
     }
 
     @Override

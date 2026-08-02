@@ -25,4 +25,10 @@ public interface SubCommand {
 
         return permission == null || sender.hasPermission(permission);
     }
+
+    default void sendHelp(CommandSender sender) {
+
+        sender.sendMessage("§6MysticalPets Commands:");
+
+    }
 }
